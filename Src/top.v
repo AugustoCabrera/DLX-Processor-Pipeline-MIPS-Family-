@@ -5,6 +5,18 @@ module top (
     output  wire o_tx       ,
     output  [15:0] o_PC_IF  
 );
+
+// -----------------------------------------------------------------------------
+// NOTE:
+//   • In the FPGA (Basys3) flow, timing closure was achieved for system 
+//     frequencies above ~40 MHz. For that reason, a clk_wiz IP was used to 
+//     derive a 45–50 MHz clock from the 100 MHz onboard oscillator.
+//   • In the ASIC flow, we do not need clk_wiz_0. The input clock is taken 
+//     directly (e.g. 100 MHz), and the target frequency is defined in the SDC. 
+// -----------------------------------------------------------------------------
+
+
+
     localparam  NB_DATA_32      = 32         ;
     localparam  NB_ADDR         = 5          ;
     localparam  NB_DATA_8       = 8          ;
@@ -19,11 +31,13 @@ module top (
     localparam  NB_WB_ID        = 40         ;              
     localparam  NB_CONTROL      = 24         ;       
     localparam  BAUD_RATE       = 19200      ;
-    localparam  CLK_FREQ        = 45_000_000 ; 
+    // Match this to your actual clock (now 100 MHz because we removed clk_wiz_0)
+    localparam  CLK_FREQ        = 100_000_000; 
     localparam  OVERSAMPLING    = 16         ; 
 
-    wire clk_45MHz;
-    wire clk;
+    // Single system clock: use input directly
+    wire clk = clk_100MHz;
+
     wire tick;  //! Tick signal for the UART
     wire [NB_DATA_8-1:0] data_Rx2Interface;
     wire rxDone;
@@ -76,13 +90,7 @@ module top (
     wire [NB_WB_ID   -1 : 0] segment_registers_WB_ID    ; 
     wire [NB_CONTROL -1 : 0] control_registers_ID_EX  ;
 
-    assign clk = clk_45MHz;
-
-    clk_wiz_0 clk_wz_inst(
-        .resetn(i_rst_n),
-        .clk_in1(clk_100MHz),
-        .clk_out1(clk_45MHz)
-    );
+    // Removed clk_wiz_0 — all logic uses 'clk' directly
 
     wire [31:0] inst_addr_from_interface;
     debug_unit #(
@@ -98,27 +106,26 @@ module top (
         .NB_CONTROL(NB_CONTROL)
     ) debug_unit_inst (
         .clk                     (clk),
-        .i_rx                   (data_Rx2Interface),
-        .i_rxDone               (rxDone), 
-        .i_txDone               (txDone),
-        .i_rst_n                (i_rst_n),
-        .o_tx_start             (tx_start),
-        .o_data                 (data_Interface2Tx),
-        .i_end                  (i_end), 
-        .o_instruction          (instruction),   
-        .o_instruction_address  (inst_addr_from_interface), 
-        .o_valid                (we),
-        .o_step                 (halt),
-        .o_start                (start),
-        .i_segment_registers_ID_EX     (segment_registers_ID_EX  ), 
-        .i_segment_registers_EX_MEM    (segment_registers_EX_MEM ),
-        .i_segment_registers_MEM_WB    (segment_registers_MEM_WB ),
-        .i_segment_registers_WB_ID     (segment_registers_WB_ID  ), 
+        .i_rx                    (data_Rx2Interface),
+        .i_rxDone                (rxDone), 
+        .i_txDone                (txDone),
+        .i_rst_n                 (i_rst_n),
+        .o_tx_start              (tx_start),
+        .o_data                  (data_Interface2Tx),
+        .i_end                   (i_end), 
+        .o_instruction           (instruction),   
+        .o_instruction_address   (inst_addr_from_interface), 
+        .o_valid                 (we),
+        .o_step                  (halt),
+        .o_start                 (start),
+        .i_segment_registers_ID_EX   (segment_registers_ID_EX), 
+        .i_segment_registers_EX_MEM  (segment_registers_EX_MEM),
+        .i_segment_registers_MEM_WB  (segment_registers_MEM_WB),
+        .i_segment_registers_WB_ID   (segment_registers_WB_ID), 
         .i_control_registers_ID_EX   (control_registers_ID_EX)
     );
 
-    wire aux_halt;
-    assign aux_halt = halt;
+    wire aux_halt = halt;
 
     MIPS MIPS_inst (
         .clk                           (clk),
@@ -132,8 +139,8 @@ module top (
         .o_segment_registers_EX_MEM    (segment_registers_EX_MEM),
         .o_segment_registers_MEM_WB    (segment_registers_MEM_WB),
         .o_segment_registers_WB_ID     (segment_registers_WB_ID),
-        .o_control_registers_ID_EX   (control_registers_ID_EX),
-        .o_pcounterIF2ID_LSB         (o_PC_IF)
+        .o_control_registers_ID_EX     (control_registers_ID_EX),
+        .o_pcounterIF2ID_LSB           (o_PC_IF)
     );
 
     assign o_tx = tx;
@@ -142,7 +149,7 @@ module top (
         .NB_DATA(NB_DATA_8),
         .NB_STOP(NB_STOP),
         .BAUD_RATE(BAUD_RATE),
-        .CLK_FREQ(CLK_FREQ),
+        .CLK_FREQ(CLK_FREQ),          // now 100 MHz
         .OVERSAMPLING(OVERSAMPLING)
     ) uart_inst (
         .clk(clk),

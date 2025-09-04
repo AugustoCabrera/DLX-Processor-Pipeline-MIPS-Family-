@@ -1,7 +1,5 @@
 
-# Enunciado
-
-**Implementar el pipeline del procesador MIPS.**
+# **Implementar el pipeline del procesador MIPS.**
 
 ## Instrucciones de Implementación
 
