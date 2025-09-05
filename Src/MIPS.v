@@ -5,9 +5,7 @@ module MIPS
     input wire          i_we_IF             ,
     input wire [31:0]   i_instruction_data  ,
     input wire          i_step              , 
-    input wire [31:0]   i_instruction_addr  ,
-    // IF
-
+    input wire [7:0]   i_instruction_addr   ,
     output  [143:0] o_segment_registers_ID_EX,
     output  [31:0]  o_segment_registers_EX_MEM,
     output  [47:0]  o_segment_registers_MEM_WB,
@@ -51,10 +49,10 @@ module MIPS
         
     parameter NB_FW = 2;
     wire [NB_FW-1 : 0] fwB_FU2EX, fwA_FU2EX;
-    wire [1:0] aluSrcEX2MEM ,  widthEX2MEM  ;
-    wire    jumpEX2MEM, branchEX2MEM, regDstEX2MEM, mem2RegEX2MEM   , 
-            memWriteEX2MEM, immediate_flagEX2MEM, sign_flagEX2MEM   , 
-            regWriteEX2MEM, memReadEX2MEM                           ;
+    wire [1:0]   widthEX2MEM  ;
+    wire    mem2RegEX2MEM   , 
+            memWriteEX2MEM,  sign_flagEX2MEM   , 
+            regWriteEX2MEM                           ;
     wire [4:0] write_regEX2MEM;
     wire [NB_DATA-1:0] data4MemEX2MEM, resultALUEX2MEM;
     wire [NB_DATA-1:0] reg_readMEM2WB, resultALUMEM2WB;
@@ -68,9 +66,7 @@ module MIPS
     wire [4:0] rsIF2ID;
     wire [4:0] rtIF2ID;
     wire [1:0] jumpType;
-    wire [31:0] inst_addr_from_interface;
     wire [4 :0] aux_rdEX;
-    assign inst_addr_from_interface = i_instruction_addr;
     assign aux_rdEX = regDstID2EX ? rtID2EX : rdID2EX;
     assign o_pcounterIF2ID_LSB = pcounterIF2ID[15:0];
 
@@ -106,7 +102,7 @@ module MIPS
         .i_we           (i_we_IF),  
         .i_jump_address (addr2jumpID2IF),  
         .i_inst_data   (i_instruction_data ),  
-        .i_instruction_addr    (inst_addr_from_interface),
+        .i_instruction_addr    (i_instruction_addr),
         .i_halt         (haltIF),
         .i_stall        (stall), 
         .o_instruction  (instructionIF2ID),
@@ -124,7 +120,6 @@ module MIPS
         .i_reset                  (i_reset),
         .i_instruction            (instructionIF2ID ),
         .i_pc                     (pcounterIF2ID ),
-        .i_we_wb                  ( ),
         .i_we                     (regWriteWB2ID ),
         .i_wr_addr                (reg2writeWB2ID),
         .i_wr_data_WB             (write_dataWB2ID),
@@ -173,7 +168,6 @@ module MIPS
         .i_func                          (funcID2EX),
         .i_regDst                        (regDstID2EX ), 
         .i_mem2reg                       (mem2RegID2EX), 
-        .i_memRead                       (memReadID2EX), 
         .i_memWrite                      (memWriteID2EX), 
         .i_immediate_flag                (immediate_flagID2EX), 
         .i_regWrite                      (regWriteID2EX),
@@ -211,8 +205,8 @@ module MIPS
     );
 
     MEM_Stage  #(
-        .NB_DATA(),
-        .NB_ADDR()
+        .NB_DATA(32),
+        .NB_ADDR(8)
     ) MEM_inst (
         .clk                             (clk),
         .i_reset                         (i_reset),

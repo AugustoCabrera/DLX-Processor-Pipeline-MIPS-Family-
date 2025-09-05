@@ -17,7 +17,6 @@ module EX_Stage
     //ctrl unit
     input wire                  i_regDst                        , 
     input wire                  i_mem2reg                       , 
-    input wire                  i_memRead                       , 
     input wire                  i_memWrite                      , 
     input wire                  i_immediate_flag                , 
     input wire                  i_regWrite                      ,
@@ -68,7 +67,6 @@ module EX_Stage
 
     reg  [5:0]           opcode                                  ;
     reg  signed [NB_DATA-1:0]   alu_data_A, alu_data_B, data4Mem ; //data4Mem_aux
-    reg  [1:0]           aluOP                                   ;
     wire [NB_DATA-1:0]   alu_result                              ;
 
     //! state machine for alu

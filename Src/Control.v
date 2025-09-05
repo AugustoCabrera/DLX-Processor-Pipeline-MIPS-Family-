@@ -2,8 +2,6 @@ module Control
 #( 
     parameter NB_OP = 6
 )(
-    input wire clk,
-    input wire i_reset,
     input wire [NB_OP-1:0] i_opcode       , //[31:26] instruction
     input wire [NB_OP-1:0] i_funct        , // for R-type [5:0] field
 
@@ -301,6 +299,12 @@ module Control
                 r_branch    = 1'b0 ;
                 r_jump      = 1'b1 ;
                 r_aluOP     = 2'b00; // X: unknown o don't care
+            end
+
+             // *** add this ***
+            default: begin
+            // cover opcodes not listed (e.g. REGIMM = 6'b000001, etc.)
+            // keep defaults (no jump/branch, no mem, no writeback)
             end
 
         endcase

@@ -7,7 +7,6 @@ module ID_Stage
     input wire                 i_reset          ,
     input wire [NB_DATA-1:0]   i_instruction    ,
     input wire [NB_DATA-1:0]   i_pc      ,
-    input wire                 i_we_wb          ,
     input wire                 i_we             ,
     input wire [NB_ADDR-1:0]   i_wr_addr        ,
     input wire [NB_DATA-1:0]   i_wr_data_WB     ,
@@ -106,8 +105,6 @@ module ID_Stage
     Control #()                                                            
     ctrl                                                           
     (                                                           
-        .clk        (clk        )               ,
-        .i_reset    (i_reset    )               ,
         .i_opcode   (opcode     )               ,
         .i_funct    (func       )               ,
 
@@ -186,6 +183,11 @@ module ID_Stage
             // Unconditional jump (J)
             o_jump      = 1'b1;
             o_addr2jump = {i_pc[NB_DATA-1:NB_DATA-4], i_instruction[25:0], 2'b00}; // Absolute jump address
+        end
+
+         default: begin
+            // cover opcodes not listed (e.g. REGIMM = 6'b000001, etc.)
+            // no jump: defaults are preserved
         end
 
         endcase
