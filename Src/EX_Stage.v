@@ -124,7 +124,7 @@ module EX_Stage
    
     EXMEM #(
         .NB_DATA(NB_DATA),
-        .NB_REG()
+        .NB_REG(5)
     ) exmem_sreg (
         .clk         (clk),
         .i_reset     (i_reset),
