@@ -38,7 +38,6 @@ module top (
     // Single system clock: use input directly
     wire clk = clk_100MHz;
 
-    wire tick;  //! Tick signal for the UART
     wire [NB_DATA_8-1:0] data_Rx2Interface;
     wire rxDone;
     wire [NB_DATA_8-1:0] data_Interface2Tx;
@@ -50,39 +49,7 @@ module top (
     wire halt;
     wire start;
     wire i_end; //! End of program — TO VERIFY HOW THE PIPELINE FINISHES
-
-    //ID_EX
-    wire [NB_DATA_32 -1 : 0] reg_DA      ; //! Register A
-    wire [NB_DATA_32 -1 : 0] reg_DB      ; //! Register B
-    wire [NB_6  -1 : 0]      opcode      ; //! Opcode
-    wire [NB_5  -1 : 0]      rs          ; //! rs
-    wire [NB_5  -1 : 0]      rt          ; //! rt
-    wire [NB_5  -1 : 0]      rd          ; //! rd
-    wire [NB_5  -1 : 0]      shamt       ; //! shamt
-    wire [NB_6  -1 : 0]      funct       ; //! funct
-    wire [NB_16 -1 : 0]      immediate   ; //! immediate
-    wire [NB_DATA_32 -1 : 0] addr2jump   ; //! jump address
-    wire [NB_DATA_32 -1 : 0] ALUresult   ; //! ALU result    
-    wire [NB_DATA_32 -1 : 0] data2mem    ; //! Memory data
-    wire [NB_DATA_8-1: 0]    dataAddr    ; //! Memory address 
-    wire memWriteDebug      ;    
-    wire [NB_DATA_32  -1: 0] write_dataWB2ID    ; //! Write data
-    wire [NB_5   -1: 0]      reg2writeWB2ID     ; //! Register to write
-    wire write_enable       ; //! Write enable              
-    wire jump        ; //! Jump
-    wire branch      ; //! Branch
-    wire regDst      ; //! RegDst
-    wire mem2Reg     ; //! MemToReg
-    wire memRead     ; //! MemRead
-    wire memWrite    ; //! MemWrite
-    wire inmediate_flag     ; //! Immediate flag
-    wire sign_flag   ; //! Sign flag
-    wire regWrite    ; //! RegWrite
-    wire [ 1 : 0]      aluSrc      ; //! ALU source
-    wire [ 1 : 0]      width       ; //! ALU operation width
-    wire [ 1 : 0]      aluOp       ; //! ALU operation    
-    wire [ 1 : 0]      fwA         ; //! Forward A
-    wire [ 1 : 0]      fwB         ; //! Forward B
+    
 
     wire [NB_ID_EX   -1 : 0] segment_registers_ID_EX    ; 
     wire [NB_EX_MEM  -1 : 0] segment_registers_EX_MEM   ;
@@ -93,6 +60,9 @@ module top (
     // Removed clk_wiz_0 — all logic uses 'clk' directly
 
     wire [31:0] inst_addr_from_interface;
+
+    wire _unused_inst_addr_hi_top = |inst_addr_from_interface[31:8];   
+
     debug_unit #(
         .NB_DATA(NB_DATA_8),
         .NB_STOP(NB_STOP),
@@ -133,7 +103,7 @@ module top (
         .i_we_IF                       (we),    // This receives the interface's `o_valid` signal
         .i_instruction_data            (instruction), // Instruction from interface
         .i_step                        (aux_halt), // This receives the interface's `o_step` signal
-        .i_instruction_addr            (inst_addr_from_interface),
+        .i_instruction_addr            (inst_addr_from_interface[7:0]),
         .o_end                         (i_end),
         .o_segment_registers_ID_EX     (segment_registers_ID_EX),
         .o_segment_registers_EX_MEM    (segment_registers_EX_MEM),

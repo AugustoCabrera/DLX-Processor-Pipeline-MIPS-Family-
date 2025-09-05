@@ -33,6 +33,8 @@ module IDEX (
     localparam [5:0] R_TYPE   = 6'b000000;
     localparam [5:0] JARL_TYPE = 6'b011111;
 
+    (* keep *) wire _unused_idex_instr_bits = |{ i_instruction[31:11], i_instruction[5:0] };
+
     always @(posedge clk or negedge i_reset) begin
         if (!i_reset) begin
             o_reg_DA         <= 32'b0;
