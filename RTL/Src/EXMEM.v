@@ -42,7 +42,7 @@ module EXMEM #(
     end
 
     // Registers for remaining signals (with asynchronous reset)
-    always @(posedge clk or negedge i_reset) begin
+    always @(posedge clk) begin
         if (!i_reset) begin
             o_mem2reg    <= 1'b0;
             o_memWrite   <= 1'b0;

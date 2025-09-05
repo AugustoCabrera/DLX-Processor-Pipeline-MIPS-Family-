@@ -32,7 +32,7 @@ module Registers
 
 
     //! writing block
-    always @(negedge clk or negedge i_reset)
+    always @(negedge clk)
     begin
         if(~i_reset)
         begin

@@ -27,7 +27,7 @@ module uart_tx #(
         STOP     = 4'b1000; // Sending stop bit
 
     // Sequential logic: State update on clock edge
-    always @(posedge clk or negedge i_reset) begin
+    always @(posedge clk) begin
         if (!i_reset) begin
             state         <= IDLE;
             tick_counter  <= 0;

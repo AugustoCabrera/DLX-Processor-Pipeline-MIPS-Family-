@@ -73,7 +73,7 @@ module debug_unit
     reg                     aux;
 
 
-    always @(posedge clk or negedge i_rst_n) begin
+    always @(posedge clk) begin
         if(!i_rst_n) begin
             state <= STATE_IDLE                                                   ;
             done_counter <= 0                                               ;

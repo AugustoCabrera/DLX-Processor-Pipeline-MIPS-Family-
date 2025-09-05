@@ -53,7 +53,7 @@ module uart_rx
                     STOP    = 4'b1000; // Stop bit reception
  
     // State and data register
-    always @(posedge clk or negedge i_reset) begin
+    always @(posedge clk) begin
         if(!i_reset) begin
             state         <= IDLE;
             tick_counter  <= 0;

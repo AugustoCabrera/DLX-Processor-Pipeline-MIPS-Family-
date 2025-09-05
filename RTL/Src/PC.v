@@ -10,7 +10,7 @@ module PC (
 );
 
 
-    always @(posedge clk or negedge i_reset) begin
+        always @(posedge clk) begin
         if (!i_reset) begin
             o_pc <= 32'b0;        // Reset PC to 0
         end

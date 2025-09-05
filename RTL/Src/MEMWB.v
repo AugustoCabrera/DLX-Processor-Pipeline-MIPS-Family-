@@ -20,7 +20,7 @@ module MEMWB #(
     output reg                o_regWrite
 );
 
-    always @(posedge clk or negedge i_reset) begin
+    always @(posedge clk) begin
         if (!i_reset) begin
             o_reg_read  <= {NB_DATA{1'b0}};
             o_ALUresult <= {NB_DATA{1'b0}};

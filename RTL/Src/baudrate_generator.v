@@ -16,7 +16,7 @@ localparam NB_COUNTER = 8; // Número de bits del contador
 reg [NB_COUNTER:0] counter; // Registro para el contador
 
 // Lógica secuencial del contador
-always @(posedge clk or negedge i_reset) begin
+always @(posedge clk) begin
     if(!i_reset) begin 
         counter <= {NB_COUNTER {1'b0}}; // Reinicia el contador en reset
     end else begin
