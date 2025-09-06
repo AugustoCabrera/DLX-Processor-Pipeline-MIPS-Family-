@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bashhhh
 set -euo pipefail
 
 # Run from repo root or from Scripts/ (relative paths handled below)
