@@ -1,4 +1,4 @@
-# R-Type
+# R-Type 
 Las instrucciones del tipo `R` operan exclusivamente con registros. Realizan operaciones aritméticas, lógicas o de control de flujo usando valores almacenados en los registros. No requieren acceder a la memoria ni incluyen direcciones explícitas.
 
 - **SLL,SLLV,SRA,SRAV,SRL,SRLV** (Instrucciones de Desplazamiento)
